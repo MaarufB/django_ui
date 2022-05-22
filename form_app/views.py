@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .models import Movie
-from .forms import MovieForm
+from .forms import ContactForm, MovieForm, NameForm
 from django.contrib import messages
+#add email module
+from django.core.mail import send_mail
+
 # Create your views here.
 
 
@@ -30,3 +33,57 @@ def index(request):
 
 
 
+def get_name(request):
+    # If this is a POST Request we need to process the form data
+    if request.method == 'POST':
+        # Create a form instance and populate it with data from the request:
+        form = NameForm(request.POST)
+        #Check whether it's valid
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponseRedirect('/thanks/')
+
+    else:
+        form = NameForm()
+
+    return render(request, 'form_app/name_list.html', {'form': form})
+
+def contact_me(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            message =form.cleaned_data['message']
+            sender = form.cleaned_data['sender']
+            cc_myself = form.cleaned_data['cc_myself']
+            
+            recipients = ['maarufburad1231@gmail.com']
+            if cc_myself:
+                recipients.append[sender]
+
+            send_mail(subject, message, sender, recipients)
+
+            return HttpResponse('<h1>Email Sends</h1>')
+
+    else:
+        form = ContactForm()
+
+    return render(request, 'form_app/contact_me.html', {'form': form})
+
+
+
+def author_list(request):
+    if request.method == "POST":
+        pass
+
+    else:
+        pass
+
+
+
+def book_list(request):
+    if request.method == "POST":
+        pass
+    
